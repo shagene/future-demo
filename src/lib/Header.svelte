@@ -1,11 +1,11 @@
 <script lang="ts">
 	// Your script content
 	export let isVisible: boolean = true;
+  let recognizedText = writable('');
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import img from '$lib/images/disney.png';
 	import {
-		Microphone,
 		MagnifyingGlass,
 		BellRinging,
 		Calendar,
@@ -13,44 +13,7 @@
 		CirclesFour
 	} from 'phosphor-svelte';
 	import profile from '$lib/images/profile.png';
-	let speechRecognition: any;
-	let isListening = writable(false);
-	let recognizedText = writable('');
-
-	onMount(() => {
-		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-		if (SpeechRecognition) {
-			speechRecognition = new SpeechRecognition();
-			speechRecognition.continuous = true;
-			speechRecognition.interimResults = true;
-			speechRecognition.onresult = (event: any) => {
-				let transcript = '';
-				for (let i = event.resultIndex; i < event.results.length; ++i) {
-					transcript += event.results[i][0].transcript;
-				}
-				recognizedText.set(transcript.trim());
-			};
-			speechRecognition.onerror = (event: any) => {
-				console.error('Speech Recognition Error:', event.error);
-			};
-		} else {
-			console.error('Speech Recognition API not supported in this browser.');
-		}
-	});
-
-	function startListening() {
-		if (speechRecognition) {
-			speechRecognition.start();
-			isListening.set(true);
-		}
-	}
-
-	function stopListening() {
-		if (speechRecognition) {
-			speechRecognition.stop();
-			isListening.set(false);
-		}
-	}
+	import SpeechRecognition from './ SpeechRecognition.svelte';
 </script>
 
 <header
@@ -62,9 +25,10 @@
 	<div class="search-container h-12">
 		<MagnifyingGlass size={24} class="search-icon ml-4" />
 		<input class="search-input" type="text" placeholder="Search" />
-		<button on:click={startListening} class="microphone-button">
-			<Microphone size={32} class="search-icon mr-4" />
-		</button>
+    <div class="mr-4">
+      <SpeechRecognition startIconSize={32} {recognizedText} />
+    </div>
+		
 	</div>
 
 	<div class="header-item header-content">
@@ -85,14 +49,6 @@
 <!-- Put last log in here and move to the right so its under the profile logo -->
 
 </header>
-
-{#if $isListening}
-	<div class="speech-popup">
-		<p>Listening...</p>
-		<p>{$recognizedText}</p>
-		<button on:click={stopListening}>Stop</button>
-	</div>
-{/if}
 
 <style>
 	header {

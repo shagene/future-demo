@@ -2,75 +2,97 @@
 	// Your script content
 	export let isVisible: boolean = true;
 	import { onMount } from 'svelte';
-  import { writable } from 'svelte/store';
-  import img from '$lib/images/disney.png';
-  import { Microphone, MagnifyingGlass } from 'phosphor-svelte';
+	import { writable } from 'svelte/store';
+	import img from '$lib/images/disney.png';
+	import {
+		Microphone,
+		MagnifyingGlass,
+		BellRinging,
+		Calendar,
+		Notepad,
+		CirclesFour
+	} from 'phosphor-svelte';
+	import profile from '$lib/images/profile.png';
+	let speechRecognition: any;
+	let isListening = writable(false);
+	let recognizedText = writable('');
 
-  let speechRecognition: any;
-  let isListening = writable(false);
-  let recognizedText = writable('');
+	onMount(() => {
+		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		if (SpeechRecognition) {
+			speechRecognition = new SpeechRecognition();
+			speechRecognition.continuous = true;
+			speechRecognition.interimResults = true;
+			speechRecognition.onresult = (event: any) => {
+				let transcript = '';
+				for (let i = event.resultIndex; i < event.results.length; ++i) {
+					transcript += event.results[i][0].transcript;
+				}
+				recognizedText.set(transcript.trim());
+			};
+			speechRecognition.onerror = (event: any) => {
+				console.error('Speech Recognition Error:', event.error);
+			};
+		} else {
+			console.error('Speech Recognition API not supported in this browser.');
+		}
+	});
 
-  onMount(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      speechRecognition = new SpeechRecognition();
-      speechRecognition.continuous = true;
-      speechRecognition.interimResults = true;
-      speechRecognition.onresult = (event: any) => {
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          transcript += event.results[i][0].transcript;
-        }
-        recognizedText.set(transcript.trim());
-      };
-      speechRecognition.onerror = (event: any) => {
-        console.error('Speech Recognition Error:', event.error);
-      };
-    } else {
-      console.error('Speech Recognition API not supported in this browser.');
-    }
-  });
+	function startListening() {
+		if (speechRecognition) {
+			speechRecognition.start();
+			isListening.set(true);
+		}
+	}
 
-  function startListening() {
-    if (speechRecognition) {
-      speechRecognition.start();
-      isListening.set(true);
-    }
-  }
-
-  function stopListening() {
-    if (speechRecognition) {
-      speechRecognition.stop();
-      isListening.set(false);
-    }
-  }
+	function stopListening() {
+		if (speechRecognition) {
+			speechRecognition.stop();
+			isListening.set(false);
+		}
+	}
 </script>
 
 <header
-	class={`fixed top-0 mt-auto pt-10 w-full flex justify-between items-center transition-transform duration-300 ${isVisible ? '' : '-translate-y-full'}`}
+  class={`fixed top-0 mt-auto pt-10 w-full flex justify-between items-center transition-transform duration-300 ${isVisible ? '' : '-translate-y-full'}`}
 >
 	<div class="flex header-item header-content">
 		<img class="img w-60 max-h-14" src={img} alt="Disney" />
 	</div>
 	<div class="search-container h-12">
-    <MagnifyingGlass size="{24}" class="search-icon ml-4" />
-    <input class="search-input" type="text" placeholder="Search" />
-    <button on:click={startListening} class="microphone-button">
-      <Microphone size="{32}" class="search-icon mr-4" />
-    </button>
-  </div>
+		<MagnifyingGlass size={24} class="search-icon ml-4" />
+		<input class="search-input" type="text" placeholder="Search" />
+		<button on:click={startListening} class="microphone-button">
+			<Microphone size={32} class="search-icon mr-4" />
+		</button>
+	</div>
 
-	<div class="header-item header-content">Profile Icon</div>
+	<div class="header-item header-content">
+  <CirclesFour size={32} class="icon mr-4" />
+  <Notepad size={32} class="icon mr-4" />
+  <Calendar size={32} class="icon mr-4" />
+  <BellRinging size={32} class="icon mr-4" />
+  <div class="profile-container">
+    <img class="img w-11 h-11 rounded-full" src={profile} alt="User Profile" />
+    <!-- Last login text will be placed here, aligned to the right under the profile image -->
+    <!-- <div class="last-login">
+      Last login<br>
+      1/10/23, 7:09pm
+    </div> -->
+  </div>
+</div>
+
+<!-- Put last log in here and move to the right so its under the profile logo -->
+
 </header>
 
 {#if $isListening}
-  <div class="speech-popup">
-    <p>Listening...</p>
-    <p>{$recognizedText}</p>
-    <button on:click={stopListening}>Stop</button>
-  </div>
+	<div class="speech-popup">
+		<p>Listening...</p>
+		<p>{$recognizedText}</p>
+		<button on:click={stopListening}>Stop</button>
+	</div>
 {/if}
-
 
 <style>
 	header {
@@ -124,27 +146,46 @@
 		color: inherit; /* Use the same font color as the container */
 	}
 
-  .speech-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 20; /* Above the header */
+	.speech-popup {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background: white;
+		padding: 1rem;
+		border-radius: 10px;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		z-index: 20; /* Above the header */
+	}
+
+	.microphone-button {
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+	}
+
+	/* Ensure the microphone icon is clickable */
+	.search-icon {
+		pointer-events: all;
+	}
+
+  .profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the items horizontally */
+    justify-content: center; /* Center the items vertically */
   }
 
-  .microphone-button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
+  .last-login {
+    text-align: center;
+    font-size: 0.75rem; /* Adjust the font size as needed */
+    color: #333; /* Adjust the text color as needed */
+    margin-top: 0.25rem; /* Adjust the margin as needed */
   }
 
-  /* Ensure the microphone icon is clickable */
-  .search-icon {
+  .icon {
     pointer-events: all;
   }
+
 </style>

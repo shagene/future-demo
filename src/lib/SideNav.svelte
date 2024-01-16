@@ -2,7 +2,6 @@
 	import NavButton from './NavButton.svelte';
 	import IconContext from 'phosphor-svelte/lib/IconContext';
 	import {
-		Horse,
 		Question,
 		SquaresFour,
 		House,
@@ -35,7 +34,6 @@
 				<NavButton
 					icon={CirclesThreePlus}
 					iconType="thin"
-					mirrored="true"
 					route="/apps"
 					routeName="Apps"
 				/>

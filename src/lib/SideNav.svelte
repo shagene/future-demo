@@ -23,14 +23,14 @@
 
 	<nav class="flex-1">
 		<ul class="flex flex-col items-center justify-center py-2 px-4">
-			<li><NavButton icon={House} iconType="fill" route="/" routeName="Home" /></li>
-			<li>
+			<li class="pt-2"><NavButton icon={House} iconType="fill" route="/" routeName="Home" /></li>
+			<li class="pt-2">
 				<NavButton icon={SquaresFour} iconType="duotone" route="/spaces" routeName="Spaces" />
 			</li>
-			<li><NavButton icon={UsersThree} iconType="bold" route="/holders" routeName="Holders" /></li>
-			<li><NavButton icon={ChartBar} iconType="regular" route="/reports" routeName="Reports" /></li>
-			<li><NavButton icon={Files} iconType="light" route="/files" routeName="Files" /></li>
-			<li>
+			<li class="pt-2"><NavButton icon={UsersThree} iconType="bold" route="/holders" routeName="Holders" /></li>
+			<li class="pt-2"><NavButton icon={ChartBar} iconType="regular" route="/reports" routeName="Reports" /></li>
+			<li class="pt-2"><NavButton icon={Files} iconType="light" route="/files" routeName="Files" /></li>
+			<li class="pt-2">
 				<NavButton
 					icon={CirclesThreePlus}
 					iconType="thin"

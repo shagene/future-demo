@@ -47,9 +47,9 @@
 </script>
 
 <button on:click={startListening} class="microphone-button">
-    <div class="microphone-icon">
-        <Microphone size={startIconSize} />
-      </div>
+	<div class="microphone-icon">
+		<Microphone size={startIconSize} />
+	</div>
 </button>
 
 {#if $isListening}
@@ -66,7 +66,7 @@
 		border: none;
 		padding: 0;
 		cursor: pointer;
-        display: block;
+		display: block;
 	}
 
 	.microphone-icon {

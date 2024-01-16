@@ -11,13 +11,15 @@
 		Files,
 		CirclesThreePlus
 	} from 'phosphor-svelte';
+	import cslogo from '$lib/images/cs-nav-logo.svg';
+
 </script>
 
 <div class="flex flex-col h-full w-20 bg-gray-800 text-white">
 	<div class="p-4 flex justify-center">
-		<IconContext values={{ color: '#FFF', size: 32, mirrored: true, weight: 'thin' }}>
-			<Horse /></IconContext
-		>
+		<div class="flex header-item header-content">
+			<img class="img w-12 h-12 bg-white rounded-full p-1" src={cslogo} alt="Computershare Logo" />
+		</div>
 	</div>
 
 	<nav class="flex-1">
